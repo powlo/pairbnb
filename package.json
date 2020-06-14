@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "ionic:serve": "vue-cli-service serve",
+    "ionic:build": "vue-cli-service build",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
