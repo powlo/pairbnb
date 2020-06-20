@@ -29,17 +29,17 @@ export default {
           title: 'Schnitzel',
           imageUrl:
             'https://upload.wikimedia.org/wikipedia/commons/2/22/Breitenlesau_Krug_Br%C3%A4u_Schnitzel.JPG',
-          ingredients: ['French Fries', 'Pork Meat', 'Salad'],
+          ingredients: ['French Fries', 'Pork Meat', 'Salad']
         },
         {
           id: 'r2',
           title: 'Spaghetti',
           imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Spaghetti_puttanesca.jpg',
-          ingredients: ['Spaghetti', 'Meat', 'Tomatoes'],
-        },
-      ],
+          ingredients: ['Spaghetti', 'Meat', 'Tomatoes']
+        }
+      ]
     };
-  },
+  }
 };
 </script>
 
