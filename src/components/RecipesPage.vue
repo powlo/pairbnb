@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ion-page>
     <ion-header>
       <ion-toolbar>
         <ion-title>Recipes</ion-title>
@@ -16,7 +16,7 @@
         </ion-item>
       </ion-list>
     </ion-content>
-  </div>
+  </ion-page>
 </template>
 
 <script>

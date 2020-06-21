@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <ion-page>
     <ion-header>
       <ion-toolbar>
         <ion-title>Recipe Detail</ion-title>
       </ion-toolbar>
     </ion-header>
-  </div>
+  </ion-page>
 </template>
 
 <script>
