@@ -24,7 +24,7 @@
         <ion-row>
           <ion-col>
             <h1 class="ion-text-center">
-              <ion-icon name="trash"></ion-icon>{{ loadedRecipe.title }}
+              {{ loadedRecipe.title }}
             </h1>
           </ion-col>
         </ion-row>

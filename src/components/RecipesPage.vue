@@ -8,23 +8,19 @@
 
     <ion-content>
       <ion-list>
-        <ion-item
-          v-for="recipe of recipes"
-          :key="recipe.id"
-          @click="$router.push(`./recipes/${recipe.id}`)"
-        >
-          <ion-avatar slot="start">
-            <ion-img :src="recipe.imageUrl"></ion-img>
-          </ion-avatar>
-          <ion-label>{{ recipe.title }}</ion-label>
-        </ion-item>
+        <RecipeItem v-for="recipe of recipes" :key="recipe.id" :recipe="recipe"></RecipeItem>
       </ion-list>
     </ion-content>
   </ion-page>
 </template>
 
 <script>
+import RecipeItem from './RecipeItem.vue';
+
 export default {
+  components: {
+    RecipeItem
+  },
   computed: {
     recipes() {
       return this.$store.getters.getAllRecipes;
