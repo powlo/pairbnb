@@ -8,7 +8,7 @@
         <ion-title>{{ loadedRecipe.title }}</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="onDelete">
-            <ion-icon name="trash-outline" slot="icon-only"> </ion-icon>
+            <ion-icon name="trash" slot="icon-only"> </ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
