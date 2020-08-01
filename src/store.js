@@ -5,36 +5,34 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    recipes: [
+    places: [
       {
-        id: 'r1',
-        title: 'Schnitzel',
-        imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/2/22/Breitenlesau_Krug_Br%C3%A4u_Schnitzel.JPG',
-        ingredients: ['French Fries', 'Pork Meat', 'Salad']
+        id: 'p1',
+        title: 'Manhatten Mansion',
+        description: 'In the heart of New York City',
+        imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688',
+        price: 149.99
       },
       {
-        id: 'r2',
-        title: 'Spaghetti',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Spaghetti_puttanesca.jpg',
-        ingredients: ['Spaghetti', 'Meat', 'Tomatoes']
+        id: 'p2',
+        title: "L'Amour Toujour",
+        description: 'A romantic place in Paris',
+        imageUrl: 'https://images.unsplash.com/photo-1471623600634-4d04cfc56a27',
+        price: 189.99
+      },
+      {
+        id: 'p3',
+        title: 'The Foggy Palace',
+        description: 'Not your average city trip',
+        imageUrl: 'https://images.unsplash.com/photo-1531383339897-f369f6422e40',
+        price: 99.99
       }
     ]
   },
-  mutations: {
-    deleteRecipe(state, id) {
-      const index = state.recipes.findIndex(r => r.id === id);
-      state.recipes.splice(index, 1);
-    }
-  },
   getters: {
-    getAllRecipes(state) {
-      // doesn't achieve much but is kept here to stay in line with Agnular behaviour.
-      return state.recipes;
-    },
-    getRecipe(state) {
+    getPlace(state) {
       // NB how we return a *function* here.
-      return id => state.recipes.find(recipe => recipe.id === id);
+      return id => state.places.find(place => place.id === id);
     }
   }
 });

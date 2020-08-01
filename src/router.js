@@ -1,28 +1,39 @@
 import Vue from 'vue';
 import { IonicVueRouter } from '@ionic/vue';
 
-// Something is duff with the router. We have to modify the target component to make it appear.
-// NB routes don't work like they seem to in Angular. "Children" are expected to be embedded
-// within the parent component, ie the parent declares a <ion-vue-router>
 Vue.use(IonicVueRouter);
+
 export default new IonicVueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: '/',
   routes: [
     {
-      path: '/',
-      redirect: { name: 'recipes' }
+      path: '/places/tabs',
+      component: () => import('@/components/PlacesPage.vue'),
+      children: [
+        {
+          path: 'discover',
+          name: 'discover',
+          components: {
+            discoverRoute: () => import('@/components/DiscoverPage.vue')
+          }
+        },
+        {
+          path: 'discover/:placeId',
+          name: 'discover-details',
+          components: {
+            discoverRoute: () => import('@/components/PlaceDetailPage.vue')
+          }
+        },
+        {
+          path: 'offers',
+          name: 'offers',
+          components: {
+            offerRoute: () => import('@/components/OffersPage.vue')
+          }
+        }
+      ]
     },
-    {
-      path: '/recipes',
-      name: 'recipes',
-      component: () => import(/* webpackChunkName: "recipes" */ './components/RecipesPage.vue')
-    },
-    {
-      path: '/recipes/:id',
-      name: 'recipeDetail',
-      component: () =>
-        import(/* webpackChunkName: "recipeDetail" */ './components/RecipeDetailPage.vue')
-    }
+    { path: '/', redirect: 'places/tabs/discover' }
   ]
 });
