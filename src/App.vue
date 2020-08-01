@@ -10,13 +10,13 @@
         <ion-content>
           <ion-list>
             <ion-menu-toggle>
-              <ion-item lines="none" router-link="/places/tabs/discover">
+              <ion-item lines="none" @click="$router.push('/places/tabs/discover')">
                 <ion-icon name="business" slot="start"></ion-icon>
                 <ion-label>Discover Places</ion-label>
               </ion-item>
             </ion-menu-toggle>
             <ion-menu-toggle>
-              <ion-item lines="none" router-link="/bookings">
+              <ion-item lines="none" @click="$router.push('/bookings')">
                 <ion-icon name="checkbox-outline" slot="start"></ion-icon>
                 <ion-label>Your Bookings</ion-label>
               </ion-item>

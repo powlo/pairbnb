@@ -8,6 +8,10 @@ export default new IonicVueRouter({
   base: '/',
   routes: [
     {
+      path: '/bookings',
+      component: () => import('@/components/BookingsPage')
+    },
+    {
       path: '/places/tabs',
       component: () => import('@/components/PlacesPage.vue'),
       children: [
