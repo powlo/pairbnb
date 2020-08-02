@@ -16,14 +16,19 @@
             <ion-card>
               <ion-card-header>
                 <ion-card-title>{{ loadedPlaces[0].title }}</ion-card-title>
-                <ion-card-subtitle>{{ loadedPlaces[0].price }} / Night</ion-card-subtitle>
+                <ion-card-subtitle>${{ loadedPlaces[0].price }} / Night</ion-card-subtitle>
               </ion-card-header>
               <ion-img :src="loadedPlaces[0].imageURL"></ion-img>
               <ion-card-content>
                 <p>{{ loadedPlaces[0].description }}</p>
               </ion-card-content>
               <div class="ion-text-end">
-                <ion-button fill="clear" color="primary">More</ion-button>
+                <ion-button
+                  fill="clear"
+                  color="primary"
+                  @click="$router.push(`/places/tabs/discover/${loadedPlaces[0].id}`)"
+                  >More</ion-button
+                >
               </div>
             </ion-card>
           </ion-col>
@@ -31,17 +36,20 @@
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2">
             <ion-list>
-              <router-link to="/places/tabs/discover/p1">
-                <ion-item v-for="place of loadedPlaces.slice(1)" :key="place.title" detail>
-                  <ion-thumbnail slot="start">
-                    <ion-img :src="place.imageURL"></ion-img>
-                  </ion-thumbnail>
-                  <ion-label>
-                    <h2>{{ place.title }}</h2>
-                    <p>{{ place.description }}</p>
-                  </ion-label>
-                </ion-item>
-              </router-link>
+              <ion-item
+                v-for="place of loadedPlaces.slice(1)"
+                :key="place.title"
+                @click="$router.push(`/places/tabs/discover/${place.id}`)"
+                detail
+              >
+                <ion-thumbnail slot="start">
+                  <ion-img :src="place.imageURL"></ion-img>
+                </ion-thumbnail>
+                <ion-label>
+                  <h2>{{ place.title }}</h2>
+                  <p>{{ place.description }}</p>
+                </ion-label>
+              </ion-item>
             </ion-list>
           </ion-col>
         </ion-row>
@@ -51,7 +59,6 @@
 </template>
 
 <script>
-console.log('hi');
 export default {
   data() {
     return {

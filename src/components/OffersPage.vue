@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>My Offers</ion-title>
         <ion-buttons slot="primary">
-          <ion-button routerLink="/places/tabs/offers/new"
+          <ion-button @click="$router.push('/places/tabs/offers/new')"
             ><ion-icon name="add" slot="icon-only"></ion-icon
           ></ion-button>
         </ion-buttons>
@@ -19,14 +19,19 @@
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2">
             <ion-list>
-              <ion-item v-for="place in loadedPlaces" :key="place.id" detail>
+              <ion-item
+                v-for="place in loadedPlaces"
+                :key="place.id"
+                @click="$router.push(`/places/tabs/discover/${place.id}`)"
+                detail
+              >
                 <ion-thumbnail slot="start">
                   <ion-img :src="place.imageURL"></ion-img>
                 </ion-thumbnail>
-                <ion-label
-                  ><h2>{{ place.title }}</h2>
-                  <p>{{ place.description }}</p></ion-label
-                >
+                <ion-label>
+                  <h2>{{ place.title }}</h2>
+                  <p>{{ place.description }}</p>
+                </ion-label>
               </ion-item>
             </ion-list>
           </ion-col>

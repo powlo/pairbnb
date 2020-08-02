@@ -1,12 +1,18 @@
 import Vue from 'vue';
 import { IonicVueRouter } from '@ionic/vue';
+import store from './store';
 
 Vue.use(IonicVueRouter);
 
-export default new IonicVueRouter({
+const router = new IonicVueRouter({
   mode: 'history',
   base: '/',
   routes: [
+    {
+      path: '/auth',
+      name: 'login',
+      component: () => import('@/components/AuthPage')
+    },
     {
       path: '/bookings',
       component: () => import('@/components/BookingsPage')
@@ -41,3 +47,10 @@ export default new IonicVueRouter({
     { path: '/', redirect: 'places/tabs/discover' }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'login' && !store.state.isAuthenticated) next({ name: 'login' });
+  else next();
+});
+
+export default router;

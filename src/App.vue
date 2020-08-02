@@ -10,13 +10,13 @@
         <ion-content>
           <ion-list>
             <ion-menu-toggle>
-              <ion-item lines="none" @click="$router.push('/places/tabs/discover')">
+              <ion-item lines="none" @click="push('/places/tabs/discover')">
                 <ion-icon name="business" slot="start"></ion-icon>
                 <ion-label>Discover Places</ion-label>
               </ion-item>
             </ion-menu-toggle>
             <ion-menu-toggle>
-              <ion-item lines="none" @click="$router.push('/bookings')">
+              <ion-item lines="none" @click="push('/bookings')">
                 <ion-icon name="checkbox-outline" slot="start"></ion-icon>
                 <ion-label>Your Bookings</ion-label>
               </ion-item>
@@ -48,8 +48,17 @@ addIcons({
 });
 export default {
   methods: {
+    push(path) {
+      // Router will complain with 'Error: Avoided redundant navigation to
+      // current location: "/xy/z"'. So check before pushing.
+      // NB route vs router.
+      if (this.$route.path !== path) {
+        this.$router.push(path);
+      }
+    },
     onLogOut() {
-      console.log('logout');
+      this.$store.commit('logout');
+      this.$router.push({ name: 'login' });
     }
   }
 };

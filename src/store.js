@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    isAuthenticated: false,
     places: [
       {
         id: 'p1',
@@ -33,6 +34,14 @@ export default new Vuex.Store({
     getPlace(state) {
       // NB how we return a *function* here.
       return id => state.places.find(place => place.id === id);
+    }
+  },
+  mutations: {
+    login(state) {
+      state.isAuthenticated = true;
+    },
+    logout(state) {
+      state.isAuthenticated = false;
     }
   }
 });
