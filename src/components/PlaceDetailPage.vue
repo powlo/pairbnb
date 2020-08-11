@@ -16,10 +16,29 @@
 </template>
 
 <script>
+import CreateBookingComponent from './CreateBookingComponent.vue';
+
 export default {
   methods: {
     onBookPlace() {
-      console.log('Booked');
+      console.log('Booking');
+      this.$ionic.modalController
+        .create({
+          component: CreateBookingComponent,
+          componentProps: {
+            propsData: {
+              selectedPlace: this.$store.getters.getPlace(this.$route.params.placeId)
+            }
+          }
+        })
+        .then(modalEl => {
+          // nb we could use awaits here.
+          modalEl.present();
+          return modalEl.onDidDismiss();
+        })
+        .then(resultData => {
+          console.log(resultData);
+        });
     }
   }
 };
