@@ -28,6 +28,15 @@ export default new Vuex.Store({
         imageUrl: 'https://images.unsplash.com/photo-1531383339897-f369f6422e40',
         price: 99.99
       }
+    ],
+    bookings: [
+      {
+        id: 'xyz',
+        placedId: 'p2',
+        placeTitle: 'Manhatten Mansion',
+        guestNumber: 2,
+        userId: 'abc'
+      }
     ]
   },
   getters: {
