@@ -21,7 +21,31 @@ import CreateBookingComponent from './CreateBookingComponent.vue';
 export default {
   methods: {
     onBookPlace() {
-      console.log('Booking');
+      this.$ionic.actionSheetController
+        .create({
+          header: 'Choose an action',
+          buttons: [
+            {
+              text: 'Select Date',
+              handler: () => {
+                this.openBookingModal('select');
+              }
+            },
+            {
+              text: 'Random Date',
+              handler: () => {
+                this.openBookingModal('random');
+              }
+            },
+            { text: 'Cancel', role: 'cancel' }
+          ]
+        })
+        .then(actionSheelEl => {
+          actionSheelEl.present();
+        });
+    },
+    openBookingModal() {
+      // NB we will want to pass 'mode' into openBookingModal and use it at some point.
       this.$ionic.modalController
         .create({
           component: CreateBookingComponent,
