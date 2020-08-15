@@ -19,20 +19,12 @@
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2">
             <ion-list>
-              <ion-item-sliding v-for="place of loadedPlaces" :key="place.id">
-                <ion-item @click="$router.push(`/places/tabs/discover/${place.id}`)" detail>
-                  <ion-thumbnail slot="start">
-                    <ion-img :src="place.imageURL"></ion-img>
-                  </ion-thumbnail>
-                  <ion-label>
-                    <h2>{{ place.title }}</h2>
-                    <p>{{ place.description }}</p>
-                  </ion-label>
-                </ion-item>
+              <ion-item-sliding v-for="offer of offers" :key="offer.id">
+                <app-offer-item :offer="offer"></app-offer-item>
                 <ion-item-options>
                   <ion-item-option
                     color="secondary"
-                    @click="router.push('/places/tabs/offers/edit/' + place.id)"
+                    @click="router.push('/places/tabs/offers/edit/' + offer.id)"
                   >
                     <ion-icon name="create" slot="icon-only"></ion-icon>
                   </ion-item-option>
@@ -59,7 +51,7 @@ addIcons({
 export default {
   data() {
     return {
-      loadedPlaces: [
+      offers: [
         {
           id: 'p1',
           title: 'Manhatten Mansion',
