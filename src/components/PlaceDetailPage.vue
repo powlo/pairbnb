@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/places/tabs/discover"></ion-back-button>
         </ion-buttons>
-        <ion-title>place-detail</ion-title>
+        <ion-title>{{ place.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -19,6 +19,11 @@
 import CreateBookingComponent from './CreateBookingComponent.vue';
 
 export default {
+  computed: {
+    place() {
+      return this.$store.getters.getPlace(this.$route.params.placeId);
+    }
+  },
   methods: {
     onBookPlace() {
       this.$ionic.actionSheetController
@@ -44,14 +49,14 @@ export default {
           actionSheelEl.present();
         });
     },
-    openBookingModal() {
-      // NB we will want to pass 'mode' into openBookingModal and use it at some point.
+    openBookingModal(mode) {
       this.$ionic.modalController
         .create({
           component: CreateBookingComponent,
           componentProps: {
             propsData: {
-              selectedPlace: this.$store.getters.getPlace(this.$route.params.placeId)
+              selectedPlace: this.place,
+              selectedMode: mode
             }
           }
         })
