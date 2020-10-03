@@ -13,7 +13,7 @@
       <ion-button
         class="ion-margin"
         color="primary"
-        @click="$router.push(`/places/tabs/offers/${place.id}`)"
+        @click="$router.push(`/places/tabs/offers/edit/${place.id}`)"
         >Edit</ion-button
       >
     </ion-content>
@@ -21,10 +21,13 @@
 </template>
 <script>
 export default {
-  computed: {
-    place() {
-      return this.$store.getters.getPlace(this.$route.params.placeId);
-    }
+  data() {
+    return {
+      place: {}
+    };
+  },
+  created() {
+    this.place = this.$store.getters.getPlace(this.$route.params.placeId);
   }
 };
 </script>
