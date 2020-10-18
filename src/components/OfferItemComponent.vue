@@ -1,7 +1,7 @@
 <template>
   <ion-item @click="$router.push(`/places/tabs/offers/${offer.id}`)">
     <ion-thumbnail slot="start">
-      <ion-img :src="offer.imageURL"></ion-img>
+      <ion-img :src="offer.imageUrl"></ion-img>
     </ion-thumbnail>
     <ion-label>
       <h1>{{ offer.title }}</h1>
