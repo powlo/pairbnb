@@ -49,34 +49,10 @@ addIcons({
 });
 
 export default {
-  data() {
-    return {
-      offers: [
-        {
-          id: 'p1',
-          title: 'Manhatten Mansion',
-          description: 'In the heart of New York City',
-          imageURL: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688',
-          price: 149.99
-        },
-
-        {
-          id: 'p2',
-          title: "L'Amour Toujour",
-          description: 'A romantic place in Paris',
-          imageURL: 'https://images.unsplash.com/photo-1471623600634-4d04cfc56a27',
-          price: 189.99
-        },
-
-        {
-          id: 'p3',
-          title: 'The Foggy Palace',
-          description: 'Not your average city trip',
-          imageURL: 'https://images.unsplash.com/photo-1531383339897-f369f6422e40',
-          price: 99.99
-        }
-      ]
-    };
+  computed: {
+    offers() {
+      return this.$store.state.places;
+    }
   }
 };
 </script>

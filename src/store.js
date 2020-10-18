@@ -51,12 +51,25 @@ export default new Vuex.Store({
       return id => state.places.find(place => place.id === id);
     }
   },
+  actions: {
+    addPlace({ commit }, place) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          commit('ADD_PLACE', place);
+          resolve();
+        }, 1000);
+      });
+    }
+  },
   mutations: {
     login(state) {
       state.isAuthenticated = true;
     },
     logout(state) {
       state.isAuthenticated = false;
+    },
+    ADD_PLACE(state, place) {
+      state.places.push(place);
     }
   }
 });

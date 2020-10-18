@@ -43,6 +43,13 @@ const router = new IonicVueRouter({
           }
         },
         {
+          path: 'offers/new',
+          name: 'offer-new',
+          components: {
+            offerRoute: () => import('@/components/NewOfferPage.vue')
+          }
+        },
+        {
           path: 'offers/:placeId',
           name: 'offer-details',
           components: {
