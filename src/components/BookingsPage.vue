@@ -12,7 +12,15 @@
     <ion-content class="ion-padding">
       <ion-grid>
         <ion-row>
-          <ion-col size-md="6" offset-md="3">
+          <ion-col
+            v-if="!loadedBookings || loadedBookings.length <= 0"
+            size-md="6"
+            offset-md="3"
+            class="ion-text-center"
+          >
+            <p>No bookings found!</p>
+          </ion-col>
+          <ion-col v-if="loadedBookings && loadedBookings.length > 0" size-md="6" offset-md="3">
             <ion-list>
               <ion-item-sliding
                 v-for="(booking, idx) in loadedBookings"
