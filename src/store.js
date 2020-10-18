@@ -39,15 +39,7 @@ export default new Vuex.Store({
         userId: 'xyz'
       }
     ],
-    bookings: [
-      {
-        id: 'xyz',
-        placedId: 'p2',
-        placeTitle: 'Manhatten Mansion',
-        guestNumber: 2,
-        userId: 'abc'
-      }
-    ]
+    bookings: []
   },
   getters: {
     getPlace(state) {
@@ -75,6 +67,14 @@ export default new Vuex.Store({
           resolve();
         }, 1000);
       });
+    },
+    addBooking({ commit }, booking) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          commit('CREATE_BOOKING', booking);
+          resolve();
+        }, 1000);
+      });
     }
   },
   mutations: {
@@ -90,6 +90,9 @@ export default new Vuex.Store({
     UPDATE_PLACE(state, place) {
       const existingPlace = state.places.find(p => p.id === place.id);
       Object.assign(existingPlace, place);
+    },
+    CREATE_BOOKING(state, booking) {
+      state.bookings.push(booking);
     }
   }
 });

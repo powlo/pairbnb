@@ -9,8 +9,24 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
-      <ion-button color="primary" class="ion-margin" @click="onBookPlace">Book</ion-button>
+    <ion-content>
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size-sm="6" offset-sm="3" class="ion-no-padding">
+            <ion-img :src="place.imageUrl"></ion-img>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size-sm="6" offset-sm="3" class="ion-text-center ion-padding">
+            <p>{{ place.description }}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row v-if="isBookable">
+          <ion-col size-sm="6" offset-sm="3" class="ion-text-center">
+            <ion-button color="primary" class="ion-margin" @click="onBookPlace">Book</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-content>
   </ion-page>
 </template>
@@ -22,6 +38,9 @@ export default {
   computed: {
     place() {
       return this.$store.getters.getPlace(this.$route.params.placeId);
+    },
+    isBookable() {
+      return this.place.userId !== this.$store.state.userId;
     }
   },
   methods: {
@@ -66,7 +85,28 @@ export default {
           return modalEl.onDidDismiss();
         })
         .then(resultData => {
-          console.log(resultData);
+          if (resultData.role === 'confirm') {
+            this.$ionic.loadingController
+              .create({
+                message: 'Booking place...'
+              })
+              .then(loadingEl => {
+                loadingEl.present();
+              });
+            const data = resultData.data.bookingData;
+            this.$store
+              .dispatch('addBooking', {
+                id: this.place.id,
+                title: this.place.title,
+                imageUrl: this.place.imageUrl,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                guestNumber: data.guestNumber,
+                startDate: data.startDate,
+                endDate: data.endDate
+              })
+              .then(() => this.$ionic.loadingController.dismiss());
+          }
         });
     }
   }
