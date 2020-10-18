@@ -75,6 +75,14 @@ export default new Vuex.Store({
           resolve();
         }, 1000);
       });
+    },
+    cancelBooking({ commit }, bookingId) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          commit('CANCEL_BOOKING', bookingId);
+          resolve();
+        }, 1000);
+      });
     }
   },
   mutations: {
@@ -93,6 +101,10 @@ export default new Vuex.Store({
     },
     CREATE_BOOKING(state, booking) {
       state.bookings.push(booking);
+    },
+    CANCEL_BOOKING(state, bookingId) {
+      const index = state.bookings.map(p => p.id).indexOf(bookingId);
+      state.bookings.splice(index, 1);
     }
   }
 });

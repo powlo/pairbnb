@@ -22,7 +22,7 @@
                 <!-- add slideBooking id -->
                 <ion-item>
                   <ion-label>
-                    <h5>{{ booking.placeTitle }}</h5>
+                    <h5>{{ booking.title }}</h5>
                     <p>Guests: {{ booking.guestNumber }}</p>
                   </ion-label>
                 </ion-item>
@@ -41,16 +41,26 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 export default {
-  computed: mapState({
-    loadedBookings: state => state.bookings
-  }),
+  computed: {
+    loadedBookings() {
+      return this.$store.state.bookings;
+    }
+  },
   methods: {
-    onCancelBooking(offerId, idx) {
+    onCancelBooking(bookingId, idx) {
       this.$refs.slidingBooking[idx].close();
-      // todo cancel booking
+      this.$ionic.loadingController
+        .create({
+          message: 'Cancelling...'
+        })
+        .then(loadingEl => {
+          loadingEl.present();
+        });
+      // An observable to which you don't observe will never execute.
+      this.$store.dispatch('cancelBooking', bookingId).then(() => {
+        this.$ionic.loadingController.dismiss();
+      });
     }
   }
 };
