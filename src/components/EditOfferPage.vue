@@ -76,11 +76,23 @@ export default {
   },
   methods: {
     onEditOffer() {
-      console.log('Submitting form.');
+      this.$ionic.loadingController
+        .create({
+          message: 'Updating place...'
+        })
+        .then(loadingEl => {
+          loadingEl.present();
+        });
+      this.$store.dispatch('updatePlace', this.place).then(() => {
+        this.$refs.validator.reset();
+        this.$ionic.loadingController.dismiss();
+        this.$router.push('/places/tabs/offers');
+      });
     }
   },
   created() {
-    this.place = this.$store.getters.getPlace(this.$route.params.placeId);
+    // Note use of spread operator to prevent state modification.
+    this.place = { ...this.$store.getters.getPlace(this.$route.params.placeId) };
   }
 };
 </script>

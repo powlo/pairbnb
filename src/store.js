@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     isAuthenticated: true,
+    userId: 'abc',
     places: [
       {
         id: 'p1',
@@ -14,7 +15,8 @@ export default new Vuex.Store({
         imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688',
         price: 149.99,
         availableFrom: new Date('2020-01-01'),
-        availableTo: new Date('2020-12-31')
+        availableTo: new Date('2020-12-31'),
+        userId: 'abc'
       },
       {
         id: 'p2',
@@ -23,7 +25,8 @@ export default new Vuex.Store({
         imageUrl: 'https://images.unsplash.com/photo-1471623600634-4d04cfc56a27',
         price: 189.99,
         availableFrom: new Date('2020-03-01'),
-        availableTo: new Date('2020-11-30')
+        availableTo: new Date('2020-11-30'),
+        userId: 'abc'
       },
       {
         id: 'p3',
@@ -32,7 +35,8 @@ export default new Vuex.Store({
         imageUrl: 'https://images.unsplash.com/photo-1531383339897-f369f6422e40',
         price: 99.99,
         availableFrom: new Date('2020-06-01'),
-        availableTo: new Date('2021-01-31')
+        availableTo: new Date('2021-01-31'),
+        userId: 'xyz'
       }
     ],
     bookings: [
@@ -47,15 +51,27 @@ export default new Vuex.Store({
   },
   getters: {
     getPlace(state) {
-      // NB how we return a *function* here.
-      return id => state.places.find(place => place.id === id);
+      return id => {
+        return state.places.find(p => p.id === id);
+      };
+    },
+    getUserId(state) {
+      return state.userId;
     }
   },
   actions: {
     addPlace({ commit }, place) {
       return new Promise(resolve => {
         setTimeout(() => {
-          commit('ADD_PLACE', place);
+          commit('CREATE_PLACE', place);
+          resolve();
+        }, 1000);
+      });
+    },
+    updatePlace({ commit }, place) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          commit('UPDATE_PLACE', place);
           resolve();
         }, 1000);
       });
@@ -68,8 +84,12 @@ export default new Vuex.Store({
     logout(state) {
       state.isAuthenticated = false;
     },
-    ADD_PLACE(state, place) {
+    CREATE_PLACE(state, place) {
       state.places.push(place);
+    },
+    UPDATE_PLACE(state, place) {
+      const existingPlace = state.places.find(p => p.id === place.id);
+      Object.assign(existingPlace, place);
     }
   }
 });
