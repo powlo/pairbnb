@@ -116,7 +116,6 @@ export default {
       // chain this off the above?
       this.$store
         .dispatch('addPlace', {
-          id: Math.random().toString(),
           title: this.place.title,
           description: this.place.description,
           imageUrl:
@@ -127,8 +126,10 @@ export default {
         })
         .then(() => {
           this.$refs.validator.reset();
-          this.$ionic.loadingController.dismiss();
           this.$router.push('/places/tabs/offers');
+        })
+        .finally(() => {
+          this.$ionic.loadingController.dismiss();
         });
     }
   }

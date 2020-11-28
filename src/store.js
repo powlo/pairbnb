@@ -52,13 +52,28 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addPlace({ commit }, place) {
-      return new Promise(resolve => {
-        setTimeout(() => {
+    addPlace({ commit }, p) {
+      // return new Promise(resolve => {
+      //   setTimeout(() => {
+      //     commit('CREATE_PLACE', place);
+      //     resolve();
+      //   }, 1000);
+      // });
+      const place = { ...p };
+      return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json', {
+        method: 'post',
+        body: JSON.stringify(place)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          place.id = data.name;
           commit('CREATE_PLACE', place);
-          resolve();
-        }, 1000);
-      });
+        });
     },
     updatePlace({ commit }, place) {
       return new Promise(resolve => {
