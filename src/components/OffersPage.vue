@@ -18,7 +18,16 @@
       <ion-grid>
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2">
-            <ion-list>
+            <div v-if="isLoading" class="ion-text-center">
+              <ion-spinner color="primary"></ion-spinner>
+            </div>
+            <div v-if="!isLoading && offers.length <= 0" class="ion-text-center">
+              <p>No offers found! Please create one first</p>
+              <ion-button color="primary" routerLink="/places/tabs/offers/new"
+                >Offer New Place</ion-button
+              >
+            </div>
+            <ion-list v-if="!isLoading && offers.length > 0">
               <ion-item-sliding v-for="offer of offers" :key="offer.id">
                 <app-offer-item :offer="offer"></app-offer-item>
                 <ion-item-options>
@@ -49,10 +58,26 @@ addIcons({
 });
 
 export default {
+  data() {
+    return {
+      isLoading: false
+    };
+  },
   computed: {
     offers() {
       return this.$store.state.places;
     }
+  },
+  beforeCreate() {
+    // We want to fetch places from backend whenever this view becomes active.
+    // NB componets are created and destroyed by the router, so beforeCreate
+    // gets called when the user comes *back* to the page for example from
+    // the new offer page. This isn't good (nothing changed) so it would be
+    // better to use ionic's DidEnter WillEnter type methods.
+    this.isLoading = true;
+    this.$store.dispatch('fetchPlaces').then(() => {
+      this.isLoading = false;
+    });
   }
 };
 </script>

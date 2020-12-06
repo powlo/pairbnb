@@ -118,7 +118,7 @@ export default {
         .dispatch('addPlace', {
           title: this.place.title,
           description: this.place.description,
-          imageUrl:
+          imageURL:
             'https://lonelyplanetimages.imgix.net/mastheads/GettyImages-538096543_medium.jpg?sharp=10&vib=20&w=1200',
           price: +this.place.price,
           availableFrom: new Date(this.place.dateFrom),

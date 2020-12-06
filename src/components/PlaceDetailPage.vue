@@ -13,7 +13,7 @@
       <ion-grid class="ion-no-padding">
         <ion-row>
           <ion-col size-sm="6" offset-sm="3" class="ion-no-padding">
-            <ion-img :src="place.imageUrl"></ion-img>
+            <ion-img :src="place.imageURL"></ion-img>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -98,7 +98,7 @@ export default {
               .dispatch('addBooking', {
                 id: this.place.id,
                 title: this.place.title,
-                imageUrl: this.place.imageUrl,
+                imageURL: this.place.imageURL,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 guestNumber: data.guestNumber,

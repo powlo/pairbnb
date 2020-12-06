@@ -7,38 +7,7 @@ export default new Vuex.Store({
   state: {
     isAuthenticated: true,
     userId: 'abc',
-    places: [
-      {
-        id: 'p1',
-        title: 'Manhatten Mansion',
-        description: 'In the heart of New York City',
-        imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688',
-        price: 149.99,
-        availableFrom: new Date('2020-01-01'),
-        availableTo: new Date('2020-12-31'),
-        userId: 'abc'
-      },
-      {
-        id: 'p2',
-        title: "L'Amour Toujour",
-        description: 'A romantic place in Paris',
-        imageUrl: 'https://images.unsplash.com/photo-1471623600634-4d04cfc56a27',
-        price: 189.99,
-        availableFrom: new Date('2020-03-01'),
-        availableTo: new Date('2020-11-30'),
-        userId: 'abc'
-      },
-      {
-        id: 'p3',
-        title: 'The Foggy Palace',
-        description: 'Not your average city trip',
-        imageUrl: 'https://images.unsplash.com/photo-1531383339897-f369f6422e40',
-        price: 99.99,
-        availableFrom: new Date('2020-06-01'),
-        availableTo: new Date('2021-01-31'),
-        userId: 'xyz'
-      }
-    ],
+    places: [],
     bookings: []
   },
   getters: {
@@ -83,6 +52,26 @@ export default new Vuex.Store({
         }, 1000);
       });
     },
+    fetchPlaces({ commit }) {
+      return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json')
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          commit('CLEAR_PLACES');
+          Object.keys(data).forEach(id => {
+            const place = data[id];
+            place.id = id;
+            place.availableFrom = new Date(place.availableFrom);
+            place.availableTo = new Date(place.availableTo);
+            commit('CREATE_PLACE', place);
+          });
+        });
+    },
+
     addBooking({ commit }, booking) {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -113,6 +102,9 @@ export default new Vuex.Store({
     UPDATE_PLACE(state, place) {
       const existingPlace = state.places.find(p => p.id === place.id);
       Object.assign(existingPlace, place);
+    },
+    CLEAR_PLACES(state) {
+      state.places = [];
     },
     CREATE_BOOKING(state, booking) {
       state.bookings.push(booking);

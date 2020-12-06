@@ -29,7 +29,7 @@
                 <ion-card-title>{{ relevantPlaces[0].title }}</ion-card-title>
                 <ion-card-subtitle>${{ relevantPlaces[0].price }} / Night</ion-card-subtitle>
               </ion-card-header>
-              <ion-img :src="relevantPlaces[0].imageUrl"></ion-img>
+              <ion-img :src="relevantPlaces[0].imageURL"></ion-img>
               <ion-card-content>
                 <p>{{ relevantPlaces[0].description }}</p>
               </ion-card-content>
@@ -54,7 +54,7 @@
                 detail
               >
                 <ion-thumbnail slot="start">
-                  <ion-img :src="place.imageUrl"></ion-img>
+                  <ion-img :src="place.imageURL"></ion-img>
                 </ion-thumbnail>
                 <ion-label>
                   <h2>{{ place.title }}</h2>
@@ -81,6 +81,12 @@ export default {
       const isShown = place => this.filter === 'all' || place.userId !== this.$store.state.userId;
       return this.$store.state.places.filter(isShown);
     }
+  },
+  beforeCreate() {
+    this.isLoading = true;
+    this.$store.dispatch('fetchPlaces').then(() => {
+      this.isLoading = false;
+    });
   }
 };
 </script>
