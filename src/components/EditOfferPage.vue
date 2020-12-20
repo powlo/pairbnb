@@ -5,7 +5,7 @@
         <ion-header>
           <ion-toolbar>
             <ion-buttons slot="start">
-              <ion-back-button default-href="/places/tabs/offers"></ion-back-button>
+              <ion-back-button :default-href="`/places/tabs/offers/${place.id}`"></ion-back-button>
             </ion-buttons>
             <ion-title>Edit Offer</ion-title>
             <ion-buttons slot="primary">
@@ -17,7 +17,10 @@
         </ion-header>
 
         <ion-content class="ion-padding">
-          <ion-grid>
+          <div v-if="isLoading" class="ion-text-center">
+            <ion-spinner color="primary"></ion-spinner>
+          </div>
+          <ion-grid v-if="!isLoading">
             <ion-row>
               <ion-col size-sm="6" offset-sm="3">
                 <ValidationProvider rules="required" v-slot="{ errors }">
@@ -71,6 +74,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       place: {}
     };
   },
@@ -91,8 +95,32 @@ export default {
     }
   },
   created() {
-    // Note use of spread operator to prevent state modification.
-    this.place = { ...this.$store.getters.getPlace(this.$route.params.placeId) };
+    this.isLoading = true;
+    const id = this.$route.params.placeId;
+    this.$store
+      .dispatch('getPlace', id)
+      .then(place => {
+        this.isLoading = false;
+        this.place = place;
+      })
+      .catch(() => {
+        this.$ionic.alertController
+          .create({
+            header: 'An error occured...',
+            message: 'Place could not be fetched. Please try agin later.',
+            buttons: [
+              {
+                text: 'OK',
+                handler: () => {
+                  this.$router.push('/places/tabs/offers/');
+                }
+              }
+            ]
+          })
+          .then(alertEl => {
+            alertEl.present();
+          });
+      });
   }
 };
 </script>

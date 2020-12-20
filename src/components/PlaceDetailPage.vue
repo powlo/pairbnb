@@ -35,13 +35,21 @@
 import CreateBookingComponent from './CreateBookingComponent.vue';
 
 export default {
+  data() {
+    return {
+      place: {}
+    };
+  },
   computed: {
-    place() {
-      return this.$store.getters.getPlace(this.$route.params.placeId);
-    },
     isBookable() {
       return this.place.userId !== this.$store.state.userId;
     }
+  },
+  created() {
+    const id = this.$route.params.placeId;
+    this.$store.dispatch('getPlace', id).then(place => {
+      this.place = place;
+    });
   },
   methods: {
     onBookPlace() {

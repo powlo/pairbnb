@@ -27,7 +27,10 @@ export default {
     };
   },
   created() {
-    this.place = this.$store.getters.getPlace(this.$route.params.placeId);
+    const id = this.$route.params.placeId;
+    this.$store.dispatch('getPlace', id).then(place => {
+      this.place = place;
+    });
   }
 };
 </script>

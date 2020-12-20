@@ -11,11 +11,6 @@ export default new Vuex.Store({
     bookings: []
   },
   getters: {
-    getPlace(state) {
-      return id => {
-        return state.places.find(p => p.id === id);
-      };
-    },
     getUserId(state) {
       return state.userId;
     }
@@ -58,6 +53,23 @@ export default new Vuex.Store({
         }
         commit('UPDATE_PLACE', place);
       });
+    },
+    getPlace({ commit }, id) {
+      return fetch(`https://udemy-ionic-982b7.firebaseio.com/offered-places/${id}.json`)
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          commit('CLEAR_PLACES');
+          const place = data;
+          place.availableFrom = new Date(place.availableFrom);
+          place.availableTo = new Date(place.availableTo);
+          commit('CREATE_PLACE', place);
+          return { ...place };
+        });
     },
     fetchPlaces({ commit }) {
       return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json')
