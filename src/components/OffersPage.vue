@@ -23,7 +23,7 @@
             </div>
             <div v-if="!isLoading && offers.length <= 0" class="ion-text-center">
               <p>No offers found! Please create one first</p>
-              <ion-button color="primary" routerLink="/places/tabs/offers/new"
+              <ion-button color="primary" @click="$router.push('/places/tabs/offers/new')"
                 >Offer New Place</ion-button
               >
             </div>

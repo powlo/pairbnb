@@ -45,11 +45,18 @@ export default new Vuex.Store({
         });
     },
     updatePlace({ commit }, place) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          commit('UPDATE_PLACE', place);
-          resolve();
-        }, 1000);
+      // NB we won't be able to update place if we come directly to the edit page.
+      return fetch(`https://udemy-ionic-982b7.firebaseio.com/offered-places/${place.id}.json`, {
+        method: 'PUT',
+        body: JSON.stringify(place),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (!response.ok) {
+          throw Error(`${response.status} ${response.statusText}`);
+        }
+        commit('UPDATE_PLACE', place);
       });
     },
     fetchPlaces({ commit }) {
@@ -62,6 +69,7 @@ export default new Vuex.Store({
         })
         .then(data => {
           commit('CLEAR_PLACES');
+          if (!data) return;
           Object.keys(data).forEach(id => {
             const place = data[id];
             place.id = id;
