@@ -14,14 +14,21 @@
         <ion-segment-button value="all">All Places</ion-segment-button>
         <ion-segment-button value="bookable">Bookable Places</ion-segment-button>
       </ion-segment>
-      <ion-grid v-if="!relevantPlaces || relevantPlaces.length <= 0">
+      <ion-grid v-if="isLoading">
+        <ion-row>
+          <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
+            <ion-spinner color="primary"></ion-spinner>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-grid v-if="!isLoading && (!relevantPlaces || relevantPlaces.length <= 0)">
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
             <p>There are no bookable places right now, please come back later.</p>
           </ion-col>
         </ion-row>
       </ion-grid>
-      <ion-grid v-if="relevantPlaces.length > 0">
+      <ion-grid v-if="!isLoading && relevantPlaces.length > 0">
         <ion-row>
           <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
             <ion-card>
@@ -73,7 +80,8 @@
 export default {
   data() {
     return {
-      filter: 'all'
+      filter: 'all',
+      isLoading: false
     };
   },
   computed: {
@@ -82,7 +90,7 @@ export default {
       return this.$store.state.places.filter(isShown);
     }
   },
-  beforeCreate() {
+  mounted() {
     this.isLoading = true;
     this.$store.dispatch('fetchPlaces').then(() => {
       this.isLoading = false;
