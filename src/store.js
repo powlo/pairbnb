@@ -108,6 +108,28 @@ export default new Vuex.Store({
       }).then(() => {
         commit('CANCEL_BOOKING', bookingId);
       });
+    },
+    fetchBookings({ commit, state }) {
+      return fetch(
+        `https://udemy-ionic-982b7.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${state.userId}"`
+      )
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          commit('CLEAR_BOOKINGS');
+          if (!data) return;
+          Object.keys(data).forEach(id => {
+            const booking = data[id];
+            booking.id = id;
+            booking.startDate = new Date(booking.startDate);
+            booking.endDate = new Date(booking.endDate);
+            commit('CREATE_BOOKING', booking);
+          });
+        });
     }
   },
   mutations: {
@@ -125,7 +147,7 @@ export default new Vuex.Store({
       Object.assign(existingPlace, place);
     },
     CLEAR_PLACES(state) {
-      state.places = [];
+      state.places.splice(0);
     },
     CREATE_BOOKING(state, booking) {
       state.bookings.push(booking);
@@ -133,6 +155,11 @@ export default new Vuex.Store({
     CANCEL_BOOKING(state, bookingId) {
       const index = state.bookings.map(p => p.id).indexOf(bookingId);
       state.bookings.splice(index, 1);
+    },
+    CLEAR_BOOKINGS(state) {
+      // We have to do this .splice() to empty the array while
+      // maintaining Vue reactivity. Could also use Vue.set.
+      state.bookings.splice(0);
     }
   }
 });

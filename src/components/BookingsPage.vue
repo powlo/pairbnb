@@ -10,7 +10,10 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <ion-grid>
+      <div v-if="isLoading" class="ion-text-center">
+        <ion-spinner color="primary"></ion-spinner>
+      </div>
+      <ion-grid v-else>
         <ion-row>
           <ion-col
             v-if="!loadedBookings || loadedBookings.length <= 0"
@@ -20,7 +23,7 @@
           >
             <p>No bookings found!</p>
           </ion-col>
-          <ion-col v-if="loadedBookings && loadedBookings.length > 0" size-md="6" offset-md="3">
+          <ion-col v-else size-md="6" offset-md="3">
             <ion-list>
               <ion-item-sliding
                 v-for="(booking, idx) in loadedBookings"
@@ -29,6 +32,9 @@
               >
                 <!-- add slideBooking id -->
                 <ion-item>
+                  <ion-avatar>
+                    <ion-img :src="booking.imageURL"></ion-img>
+                  </ion-avatar>
                   <ion-label>
                     <h5>{{ booking.title }}</h5>
                     <p>Guests: {{ booking.guestNumber }}</p>
@@ -50,6 +56,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      isLoading: false
+    };
+  },
   computed: {
     loadedBookings() {
       return this.$store.state.bookings;
@@ -70,6 +81,12 @@ export default {
         this.$ionic.loadingController.dismiss();
       });
     }
+  },
+  mounted() {
+    this.isLoading = true;
+    this.$store.dispatch('fetchBookings').then(() => {
+      this.isLoading = false;
+    });
   }
 };
 </script>

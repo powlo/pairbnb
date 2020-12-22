@@ -130,6 +130,7 @@ export default {
             const data = resultData.data.bookingData;
             this.$store
               .dispatch('addBooking', {
+                userId: this.$store.state.userId,
                 title: this.place.title,
                 imageURL: this.place.imageURL,
                 firstName: data.firstName,
