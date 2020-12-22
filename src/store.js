@@ -17,12 +17,6 @@ export default new Vuex.Store({
   },
   actions: {
     addPlace({ commit }, p) {
-      // return new Promise(resolve => {
-      //   setTimeout(() => {
-      //     commit('CREATE_PLACE', place);
-      //     resolve();
-      //   }, 1000);
-      // });
       const place = { ...p };
       return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json', {
         method: 'post',
@@ -91,21 +85,28 @@ export default new Vuex.Store({
           });
         });
     },
-
-    addBooking({ commit }, booking) {
-      return new Promise(resolve => {
-        setTimeout(() => {
+    addBooking({ commit }, b) {
+      const booking = { ...b };
+      return fetch('https://udemy-ionic-982b7.firebaseio.com/bookings.json', {
+        method: 'post',
+        body: JSON.stringify(booking)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          booking.id = data.name;
           commit('CREATE_BOOKING', booking);
-          resolve();
-        }, 1000);
-      });
+        });
     },
     cancelBooking({ commit }, bookingId) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          commit('CANCEL_BOOKING', bookingId);
-          resolve();
-        }, 1000);
+      return fetch(`https://udemy-ionic-982b7.firebaseio.com/bookings/${bookingId}.json`, {
+        method: 'delete'
+      }).then(() => {
+        commit('CANCEL_BOOKING', bookingId);
       });
     }
   },
