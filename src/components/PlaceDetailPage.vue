@@ -5,12 +5,15 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/places/tabs/discover"></ion-back-button>
         </ion-buttons>
-        <ion-title>{{ place.title }}</ion-title>
+        <ion-title>{{ isLoading ? 'Loading...' : place.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
-      <ion-grid class="ion-no-padding">
+      <div v-if="isLoading" class="ion-text-center">
+        <ion-spinner color="primary"></ion-spinner>
+      </div>
+      <ion-grid v-else class="ion-no-padding">
         <ion-row>
           <ion-col size-sm="6" offset-sm="3" class="ion-no-padding">
             <ion-img :src="place.imageURL"></ion-img>
@@ -37,7 +40,8 @@ import CreateBookingComponent from './CreateBookingComponent.vue';
 export default {
   data() {
     return {
-      place: {}
+      place: {},
+      isLoading: false
     };
   },
   computed: {
@@ -47,9 +51,31 @@ export default {
   },
   created() {
     const id = this.$route.params.placeId;
-    this.$store.dispatch('getPlace', id).then(place => {
-      this.place = place;
-    });
+    this.isLoading = true;
+    this.$store
+      .dispatch('getPlace', id)
+      .then(place => {
+        this.isLoading = false;
+        this.place = place;
+      })
+      .catch(() => {
+        this.$ionic.alertController
+          .create({
+            header: 'An error occured...',
+            message: 'Could not load place.',
+            buttons: [
+              {
+                text: 'OK',
+                handler: () => {
+                  this.$router.push('/places/tabs/discover/');
+                }
+              }
+            ]
+          })
+          .then(alertEl => {
+            alertEl.present();
+          });
+      });
   },
   methods: {
     onBookPlace() {

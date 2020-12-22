@@ -104,6 +104,7 @@ export default {
         this.place = place;
       })
       .catch(() => {
+        this.isLoading = false;
         this.$ionic.alertController
           .create({
             header: 'An error occured...',
