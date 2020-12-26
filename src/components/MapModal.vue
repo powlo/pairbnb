@@ -20,9 +20,16 @@
 import environment from '../environments/environment';
 
 export default {
+  data() {
+    return {
+      clickListener: null,
+      googleMaps: null
+    };
+  },
   created() {
     this.getGoogleMaps()
       .then(googleMaps => {
+        this.googleMaps = googleMaps;
         const mapEl = this.$refs.map;
         const map = new googleMaps.Map(mapEl, {
           center: {
@@ -38,7 +45,7 @@ export default {
           mapEl.classList.add('visible');
         });
 
-        map.addListener('click', event => {
+        this.clickListener = map.addListener('click', event => {
           const selectedCoords = {
             lat: event.latLng.lat(),
             lng: event.latLng.lng()
@@ -50,9 +57,11 @@ export default {
         console.error(err);
       });
   },
+  destroyed() {
+    this.googleMaps.event.removeListener(this.clickListener);
+  },
   methods: {
     onCancel() {
-      // TODO: pass a data object to dismiss.
       this.$ionic.modalController.dismiss();
     },
     getGoogleMaps() {

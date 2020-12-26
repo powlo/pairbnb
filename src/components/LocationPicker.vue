@@ -43,7 +43,7 @@ export default {
           return modal.onDidDismiss();
         })
         .then(modalData => {
-          if (!modalData) throw Error('No data.');
+          if (!modalData || !modalData.data) return;
 
           this.isLoading = true;
           const pickedLocation = {
