@@ -3,6 +3,7 @@
     <ion-spinner v-if="isLoading" color="primary"></ion-spinner>
     <ion-img
       v-if="!isLoading && selectedLocationImage"
+      @click="onPickLocation"
       :src="selectedLocationImage"
       class="location-image"
     ></ion-img>
