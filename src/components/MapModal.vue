@@ -11,7 +11,7 @@
     </ion-header>
 
     <ion-content>
-      <div class="map"></div>
+      <div class="map" ref="map"></div>
     </ion-content>
   </ion-page>
 </template>
@@ -19,9 +19,34 @@
 <script>
 export default {
   created() {
-    this.getGoogleMaps().catch(err => {
-      console.error(err);
-    });
+    this.getGoogleMaps()
+      .then(googleMaps => {
+        const mapEl = this.$refs.map;
+        const map = new googleMaps.Map(mapEl, {
+          center: {
+            lat: 52.2053,
+            lng: 0.1218
+          },
+          zoom: 16
+        });
+
+        // Use the google maps API to listen for when the map is done
+        // (ie now idle). When it is, set a visible class on the map.
+        googleMaps.event.addListenerOnce(map, 'idle', () => {
+          mapEl.classList.add('visible');
+        });
+
+        map.addListener('click', event => {
+          const selectedCoords = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng()
+          };
+          this.$ionic.modalController.dismiss(selectedCoords);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   },
   methods: {
     onCancel() {
@@ -57,4 +82,19 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.map {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  background-color: transparent;
+
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+}
+
+.map.visible {
+  opacity: 1;
+}
+</style>
