@@ -74,6 +74,11 @@
                 </ion-item>
               </ion-col>
             </ion-row>
+            <ion-row>
+              <ion-col size-sm="6" offset-sm="3">
+                <app-location-picker></app-location-picker>
+              </ion-col>
+            </ion-row>
           </ion-grid>
         </ion-content>
       </ion-page>
@@ -85,6 +90,7 @@ import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
 import { required, max } from 'vee-validate/dist/rules';
 import { checkmark } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import LocationPicker from './LocationPicker.vue';
 
 addIcons({
   'ios-checkmark': checkmark.ios,
@@ -97,7 +103,8 @@ extend('max', { ...max, message: '{_field_} field must have at least {length} ch
 export default {
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
+    'app-location-picker': LocationPicker
   },
   data() {
     return {
