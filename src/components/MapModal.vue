@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import environment from '../environments/environment';
+
 export default {
   created() {
     this.getGoogleMaps()
@@ -64,7 +66,7 @@ export default {
         // We use a promise because squirting stuff into the dom, that in turn
         // makes http requests, takes time.
         const script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=abc123';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsAPIKey}`;
         script.async = true;
         script.defer = true;
         document.body.appendChild(script);
