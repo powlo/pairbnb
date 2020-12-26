@@ -76,7 +76,9 @@
             </ion-row>
             <ion-row>
               <ion-col size-sm="6" offset-sm="3">
-                <app-location-picker></app-location-picker>
+                <ValidationProvider rules="required">
+                  <app-location-picker v-model="place.location"></app-location-picker>
+                </ValidationProvider>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -129,7 +131,8 @@ export default {
             'https://lonelyplanetimages.imgix.net/mastheads/GettyImages-538096543_medium.jpg?sharp=10&vib=20&w=1200',
           price: +this.place.price,
           availableFrom: new Date(this.place.dateFrom),
-          availableTo: new Date(this.place.dateTo)
+          availableTo: new Date(this.place.dateTo),
+          location: this.place.location
         })
         .then(() => {
           this.$refs.validator.reset();
@@ -138,6 +141,9 @@ export default {
         .finally(() => {
           this.$ionic.loadingController.dismiss();
         });
+    },
+    onLocationPicked(location) {
+      this.place.location = location;
     }
   }
 };

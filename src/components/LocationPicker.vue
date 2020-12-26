@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="picker">
     <ion-spinner v-if="isLoading" color="primary"></ion-spinner>
     <ion-img
       v-if="!isLoading && selectedLocationImage"
@@ -54,11 +54,12 @@ export default {
           };
           this.getAddress(modalData.data.lat, modalData.data.lng).then(address => {
             pickedLocation.address = address;
+            const staticMapImageUrl = this.getMapImage(modalData.data.lat, modalData.data.lng, 14);
+            pickedLocation.staticMapImageUrl = staticMapImageUrl;
+            this.selectedLocationImage = staticMapImageUrl;
+            this.isLoading = false;
+            this.$emit('input', pickedLocation);
           });
-          const staticMapImageUrl = this.getMapImage(modalData.data.lat, modalData.data.lng, 14);
-          pickedLocation.staticMapImageUrl = staticMapImageUrl;
-          this.selectedLocationImage = staticMapImageUrl;
-          this.isLoading = false;
         });
     },
     getAddress(lat, lng) {
