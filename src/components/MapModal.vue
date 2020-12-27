@@ -3,9 +3,9 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Pick Location</ion-title>
+        <ion-title>{{ title }}</ion-title>
         <ion-buttons slot="primary">
-          <ion-button @click="onCancel">Cancel</ion-button>
+          <ion-button @click="onCancel">{{ closeButtonText }}</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -20,6 +20,12 @@
 import environment from '../environments/environment';
 
 export default {
+  props: {
+    center: { default: () => ({ lat: 52.2053, lng: 0.1218 }) },
+    selectable: { default: true },
+    title: { default: 'Pick Location' },
+    closeButtonText: { default: 'Cancel' }
+  },
   data() {
     return {
       clickListener: null,
@@ -32,10 +38,7 @@ export default {
         this.googleMaps = googleMaps;
         const mapEl = this.$refs.map;
         const map = new googleMaps.Map(mapEl, {
-          center: {
-            lat: 52.2053,
-            lng: 0.1218
-          },
+          center: this.center,
           zoom: 16
         });
 
@@ -44,21 +47,31 @@ export default {
         googleMaps.event.addListenerOnce(map, 'idle', () => {
           mapEl.classList.add('visible');
         });
-
-        this.clickListener = map.addListener('click', event => {
-          const selectedCoords = {
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng()
-          };
-          this.$ionic.modalController.dismiss(selectedCoords);
-        });
+        if (this.selectable) {
+          this.clickListener = map.addListener('click', event => {
+            const selectedCoords = {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng()
+            };
+            this.$ionic.modalController.dismiss(selectedCoords);
+          });
+        } else {
+          const marker = new googleMaps.Marker({
+            position: this.center,
+            map,
+            title: 'Picked Location'
+          });
+          marker.setMap(map);
+        }
       })
       .catch(err => {
         console.error(err);
       });
   },
   destroyed() {
-    this.googleMaps.event.removeListener(this.clickListener);
+    if (this.clickListener) {
+      this.googleMaps.event.removeListener(this.clickListener);
+    }
   },
   methods: {
     onCancel() {

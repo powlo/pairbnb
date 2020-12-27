@@ -31,7 +31,11 @@
         </ion-row>
         <ion-row>
           <ion-col size-sm="6" offset-sm="3" class="ion-no-padding">
-            <ion-img class="location-image" :src="place.location.staticMapImageUrl"></ion-img>
+            <ion-img
+              class="location-image"
+              :src="place.location.staticMapImageUrl"
+              @click="onShowFullMap"
+            ></ion-img>
           </ion-col>
         </ion-row>
         <ion-row v-if="isBookable">
@@ -46,6 +50,7 @@
 
 <script>
 import CreateBookingComponent from './CreateBookingComponent.vue';
+import MapModal from './MapModal.vue';
 
 export default {
   data() {
@@ -110,6 +115,26 @@ export default {
         })
         .then(actionSheelEl => {
           actionSheelEl.present();
+        });
+    },
+    onShowFullMap() {
+      this.$ionic.modalController
+        .create({
+          component: MapModal,
+          componentProps: {
+            propsData: {
+              center: {
+                lat: this.place.location.lat,
+                lng: this.place.location.lng
+              },
+              selectable: false,
+              closeButtonText: 'Close',
+              title: this.place.location.address
+            }
+          }
+        })
+        .then(modalEl => {
+          modalEl.present();
         });
     },
     openBookingModal(mode) {
