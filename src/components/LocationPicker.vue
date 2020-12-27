@@ -17,6 +17,7 @@
 <script>
 import { map } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { Plugins, Capacitor } from '@capacitor/core';
 import MapModal from './MapModal.vue';
 import environment from '../environments/environment';
 
@@ -33,34 +34,22 @@ export default {
     };
   },
   methods: {
-    onPickLocation() {
-      this.$ionic.modalController
-        .create({
-          component: MapModal
-        })
-        .then(modal => {
-          modal.present();
-          return modal.onDidDismiss();
-        })
-        .then(modalData => {
-          if (!modalData || !modalData.data) return;
-
-          this.isLoading = true;
-          const pickedLocation = {
-            lat: modalData.data.lat,
-            lng: modalData.data.lng,
-            address: null,
-            staticMapImageUrl: null
-          };
-          this.getAddress(modalData.data.lat, modalData.data.lng).then(address => {
-            pickedLocation.address = address;
-            const staticMapImageUrl = this.getMapImage(modalData.data.lat, modalData.data.lng, 14);
-            pickedLocation.staticMapImageUrl = staticMapImageUrl;
-            this.selectedLocationImage = staticMapImageUrl;
-            this.isLoading = false;
-            this.$emit('input', pickedLocation);
-          });
-        });
+    createPlace(lat, lng) {
+      this.isLoading = true;
+      const pickedLocation = {
+        lat,
+        lng,
+        address: null,
+        staticMapImageUrl: null
+      };
+      this.getAddress(lat, lng).then(address => {
+        pickedLocation.address = address;
+        const staticMapImageUrl = this.getMapImage(lat, lng, 14);
+        pickedLocation.staticMapImageUrl = staticMapImageUrl;
+        this.selectedLocationImage = staticMapImageUrl;
+        this.isLoading = false;
+        this.$emit('input', pickedLocation);
+      });
     },
     getAddress(lat, lng) {
       return fetch(
@@ -83,6 +72,79 @@ export default {
       return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
     &markers=color:red%7Clabel:C%7C${lat},${lng}
     &key=${environment.googleMapsAPIKey}`;
+    },
+    locateUser() {
+      if (!Capacitor.isPluginAvailable('Geolocation')) {
+        this.showErrorAlert();
+        return;
+      }
+      this.isLoading = true;
+      Plugins.Geolocation.getCurrentPosition()
+        .then(geoPosition => {
+          const coordinates = {
+            lat: geoPosition.coords.latitude,
+            lng: geoPosition.coords.longitude
+          };
+          this.createPlace(coordinates.lat, coordinates.lng);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+          this.showErrorAlert();
+        });
+    },
+    onPickLocation() {
+      this.$ionic.actionSheetController
+        .create({
+          header: 'Please choose',
+          buttons: [
+            {
+              text: 'Auto-locate',
+              handler: () => {
+                this.locateUser();
+              }
+            },
+            {
+              text: 'Pick on map',
+              handler: () => {
+                this.openMap();
+              }
+            },
+            { text: 'Cancel', role: 'cancel' }
+          ]
+        })
+        .then(actionEl => {
+          actionEl.present();
+        });
+    },
+    openMap() {
+      this.$ionic.modalController
+        .create({
+          component: MapModal
+        })
+        .then(modal => {
+          modal.present();
+          return modal.onDidDismiss();
+        })
+        .then(modalData => {
+          if (!modalData || !modalData.data) return;
+          const coordinates = {
+            lat: modalData.data.lat,
+            lng: modalData.data.lng
+          };
+          this.createPlace(coordinates.lat, coordinates.lng);
+        });
+    },
+    showErrorAlert() {
+      this.$ionic.alertController
+        .create({
+          header: 'Could not fetch location.',
+          message: 'Please use the map to pick a location',
+          buttons: ['OK']
+        })
+        .then(alert => {
+          alert.present();
+        });
     }
   }
 };
