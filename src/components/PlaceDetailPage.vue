@@ -24,8 +24,18 @@
             <p>{{ place.description }}</p>
           </ion-col>
         </ion-row>
+        <ion-row>
+          <ion-col size-sm="6" offset-sm="3" class="ion-padding ion-text-center">
+            <p>{{ place.location.address }}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size-sm="6" offset-sm="3" class="ion-no-padding">
+            <ion-img class="location-image" :src="place.location.staticMapImageUrl"></ion-img>
+          </ion-col>
+        </ion-row>
         <ion-row v-if="isBookable">
-          <ion-col size-sm="6" offset-sm="3" class="ion-text-center">
+          <ion-col size-sm="6" offset-sm="3" class="ion-text-center ion-no-padding">
             <ion-button color="primary" class="ion-margin" @click="onBookPlace">Book</ion-button>
           </ion-col>
         </ion-row>
@@ -147,4 +157,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.location-image {
+  width: 100%;
+  height: 25rem;
+  max-height: 30vh;
+  object-fit: cover;
+}
+
+p {
+  margin: 0;
+}
+</style>
