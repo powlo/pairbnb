@@ -81,6 +81,13 @@
                 </ValidationProvider>
               </ion-col>
             </ion-row>
+            <ion-row>
+              <ion-col size-sm="6" offset-sm="3">
+                <ValidationProvider rules="required" ref="imagepicker">
+                  <app-image-picker @imagePick="onImagePicked"></app-image-picker>
+                </ValidationProvider>
+              </ion-col>
+            </ion-row>
           </ion-grid>
         </ion-content>
       </ion-page>
@@ -93,6 +100,7 @@ import { required, max } from 'vee-validate/dist/rules';
 import { checkmark } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import LocationPicker from './LocationPicker.vue';
+import ImagePicker from './ImagePicker.vue';
 
 addIcons({
   'ios-checkmark': checkmark.ios,
@@ -102,16 +110,41 @@ addIcons({
 extend('required', { ...required, message: 'This field is required' });
 extend('max', { ...max, message: '{_field_} field must have at least {length} characters' });
 
+function base64toBlob(base64Data, contentType) {
+  const sliceSize = 1024;
+  const byteCharacters = atob(base64Data);
+  const bytesLength = byteCharacters.length;
+  const slicesCount = Math.ceil(bytesLength / sliceSize);
+  const byteArrays = new Array(slicesCount);
+
+  for (let sliceIndex = 0; sliceIndex < slicesCount; sliceIndex += 1) {
+    const begin = sliceIndex * sliceSize;
+    const end = Math.min(begin + sliceSize, bytesLength);
+
+    const bytes = new Array(end - begin);
+    for (let offset = begin, i = 0; offset < end; i += 1, offset += 1) {
+      bytes[i] = byteCharacters[offset].charCodeAt(0);
+    }
+    byteArrays[sliceIndex] = new Uint8Array(bytes);
+  }
+  return new Blob(byteArrays, { type: contentType || '' });
+}
+
 export default {
   components: {
     ValidationProvider,
     ValidationObserver,
-    'app-location-picker': LocationPicker
+    'app-location-picker': LocationPicker,
+    'app-image-picker': ImagePicker
   },
   data() {
     return {
       place: {}
     };
+  },
+  mounted() {
+    // A cheap way to force initial validation state.
+    this.$refs.imagepicker.validate(null);
   },
   methods: {
     onCreateOffer() {
@@ -144,6 +177,30 @@ export default {
     },
     onLocationPicked(location) {
       this.place.location = location;
+    },
+    onImagePicked(imageData) {
+      // NB this copies behaviour in existing angular code. However
+      // it might make validation easier if we shift this function
+      // down into the image-picker and then emit a value from there.
+      this.$refs.imagepicker.validate(imageData).then(({ valid }) => {
+        if (!valid) return;
+        let imageFile;
+        if (typeof imageData === 'string') {
+          try {
+            imageFile = base64toBlob(
+              imageData.replace('data:image/jpeg;base64,', ''),
+              'image/jpeg'
+            );
+          } catch (err) {
+            console.error(err);
+            return;
+          }
+        } else {
+          imageFile = imageData;
+        }
+        // this.$refs.provider.syncValue(null);
+        this.place.image = imageFile;
+      });
     }
   }
 };
