@@ -13,13 +13,26 @@
         ><ion-label>Take Picture</ion-label></ion-button
       >
     </div>
-    <input type="file" v-if="usePicker" ref="filePicker" @change="onFileChosen" />
+    <input
+      type="file"
+      accept="image/jpeg"
+      v-if="usePicker"
+      ref="filePicker"
+      @change="onFileChosen"
+    />
   </div>
 </template>
 
 <script>
+import { camera } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 import { isPlatform } from '@ionic/core';
 import { Plugins, Capacitor, CameraSource, CameraResultType } from '@capacitor/core';
+
+addIcons({
+  'ios-camera': camera.ios,
+  'md-camera': camera.md
+});
 
 export default {
   data() {
