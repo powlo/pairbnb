@@ -45,7 +45,7 @@ export default {
       return (isPlatform('mobile') && !isPlatform('hybrid')) || isPlatform('desktop');
     },
     onPickImage() {
-      if (!Capacitor.isPluginAvailable('Camera') || this.usePicker()) {
+      if (!Capacitor.isPluginAvailable('Camera')) {
         this.$refs.filePicker.click();
         return;
       }
@@ -55,10 +55,17 @@ export default {
         correctOrientation: true,
         width: 600,
         resultType: CameraResultType.DataUrl
-      }).then(image => {
-        this.selectedImage = image.dataUrl;
-        this.$emit('imagePick', image.dataUrl);
-      });
+      })
+        .then(image => {
+          this.selectedImage = image.dataUrl;
+          this.$emit('imagePick', image.dataUrl);
+        })
+        .catch(err => {
+          console.log(err);
+          if (this.usePicker) {
+            this.$refs.filePicker.click();
+          }
+        });
     },
     onFileChosen(event) {
       const pickedFile = event.target.files[0];

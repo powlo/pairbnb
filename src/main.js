@@ -5,6 +5,7 @@ import Ionic from '@ionic/vue';
 
 import { trash } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -29,3 +30,5 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+defineCustomElements(window);

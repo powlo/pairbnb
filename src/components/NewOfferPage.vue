@@ -187,10 +187,12 @@ export default {
         let imageFile;
         if (typeof imageData === 'string') {
           try {
-            imageFile = base64toBlob(
-              imageData.replace('data:image/jpeg;base64,', ''),
-              'image/jpeg'
-            );
+            const typePattern = /^data:(image\/(?:jpeg|png));base64,/;
+            const contentMatch = imageData.match(typePattern);
+            if (!contentMatch) throw Error('Unknown content type.');
+            const rawData = imageData.replace(typePattern, '');
+            const contentType = contentMatch[1];
+            imageFile = base64toBlob(rawData, contentType);
           } catch (err) {
             console.error(err);
             return;
