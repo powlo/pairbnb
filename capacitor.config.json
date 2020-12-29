@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "Ionic Vue",
+  "appName": "PairBnB",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",
@@ -10,5 +10,5 @@
     }
   },
   "cordova": {},
-  "linuxAndroidStudioPath": "/opt/android-studio/bin/studio.sh"
+  "linuxAndroidStudioPath": "/snap/bin/android-studio"
 }
