@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import environment from './environments/environment';
 
 Vue.use(Vuex);
+
+const baseUrl = `https://${environment.firebaseProjectId}.firebaseio.com`;
 
 export default new Vuex.Store({
   state: {
@@ -18,7 +21,7 @@ export default new Vuex.Store({
   actions: {
     addPlace({ commit }, p) {
       const place = { ...p };
-      return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json', {
+      return fetch(`${baseUrl}/offered-places.json`, {
         method: 'post',
         body: JSON.stringify(place)
       })
@@ -35,7 +38,7 @@ export default new Vuex.Store({
     },
     updatePlace({ commit }, place) {
       // NB we won't be able to update place if we come directly to the edit page.
-      return fetch(`https://udemy-ionic-982b7.firebaseio.com/offered-places/${place.id}.json`, {
+      return fetch(`${baseUrl}/offered-places/${place.id}.json`, {
         method: 'PUT',
         body: JSON.stringify(place),
         headers: {
@@ -49,7 +52,7 @@ export default new Vuex.Store({
       });
     },
     getPlace({ commit }, id) {
-      return fetch(`https://udemy-ionic-982b7.firebaseio.com/offered-places/${id}.json`)
+      return fetch(`${baseUrl}/offered-places/${id}.json`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
@@ -66,7 +69,7 @@ export default new Vuex.Store({
         });
     },
     fetchPlaces({ commit }) {
-      return fetch('https://udemy-ionic-982b7.firebaseio.com/offered-places.json')
+      return fetch(`${baseUrl}/offered-places.json`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
@@ -87,7 +90,7 @@ export default new Vuex.Store({
     },
     addBooking({ commit }, b) {
       const booking = { ...b };
-      return fetch('https://udemy-ionic-982b7.firebaseio.com/bookings.json', {
+      return fetch(`${baseUrl}/bookings.json`, {
         method: 'post',
         body: JSON.stringify(booking)
       })
@@ -103,16 +106,14 @@ export default new Vuex.Store({
         });
     },
     cancelBooking({ commit }, bookingId) {
-      return fetch(`https://udemy-ionic-982b7.firebaseio.com/bookings/${bookingId}.json`, {
+      return fetch(`${baseUrl}/bookings/${bookingId}.json`, {
         method: 'delete'
       }).then(() => {
         commit('CANCEL_BOOKING', bookingId);
       });
     },
     fetchBookings({ commit, state }) {
-      return fetch(
-        `https://udemy-ionic-982b7.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${state.userId}"`
-      )
+      return fetch(`${baseUrl}/bookings.json?orderBy="userId"&equalTo="${state.userId}"`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
