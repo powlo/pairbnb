@@ -22,7 +22,7 @@
                       <ion-label>{{ errors[0] }}</ion-label>
                     </ion-item>
                   </ValidationProvider>
-                  <ValidationProvider rules="required|length:6" v-slot="{ errors }">
+                  <ValidationProvider rules="required|min:6" v-slot="{ errors }">
                     <ion-item>
                       <ion-label position="floating">Password</ion-label>
                       <ion-input-vue v-model="password"></ion-input-vue>
@@ -61,10 +61,10 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
 
-import { required, email, length } from 'vee-validate/dist/rules';
+import { required, email, min } from 'vee-validate/dist/rules';
 
 extend('email', { ...email, message: 'Should be a valid email address' });
-extend('length', { ...length, message: 'Should at least be 6 characters long' });
+extend('min', { ...min, message: 'Should at least be 6 characters long' });
 extend('required', { ...required, message: 'This field is required' });
 
 export default {
@@ -109,7 +109,11 @@ export default {
       if (this.isLogin) {
         // Send a request to login
       } else {
-        // Send a request to signup
+        this.$store
+          .dispatch('signup', { email: this.email, password: this.password })
+          .then(resData => {
+            console.log(resData);
+          });
       }
     }
   }

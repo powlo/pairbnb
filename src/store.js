@@ -19,6 +19,16 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    /* eslint-disable-next-line no-unused-vars */
+    signup({ commit }, { email, password }) {
+      return fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
+        {
+          method: 'post',
+          body: JSON.stringify({ email, password, returnSecureToken: true })
+        }
+      );
+    },
     addPlace({ commit }, p) {
       const place = { ...p };
       return fetch(`${baseUrl}/offered-places.json`, {
