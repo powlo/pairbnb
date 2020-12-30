@@ -27,7 +27,17 @@ export default new Vuex.Store({
           method: 'post',
           body: JSON.stringify({ email, password, returnSecureToken: true })
         }
-      );
+      )
+        .then(response => {
+          return response.json();
+        })
+        .then(resData => {
+          if (resData.error) {
+            throw new Error(resData.error.message);
+          } else {
+            return resData;
+          }
+        });
     },
     addPlace({ commit }, p) {
       const place = { ...p };

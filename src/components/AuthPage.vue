@@ -7,7 +7,7 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <ValidationObserver v-slot="{ handleSubmit }" ref="validator">
+      <ValidationObserver v-slot="{ handleSubmit, invalid }" ref="validator">
         <form @submit.prevent="handleSubmit(onSubmit)">
           <ion-grid>
             <ion-row>
@@ -46,7 +46,7 @@
                   @click="onSwitchAuthMode"
                   >Switch to {{ isLogin ? 'Signup' : 'Login' }}</ion-button
                 >
-                <ion-button type="submit" color="primary" expand="block">{{
+                <ion-button type="submit" color="primary" expand="block" :disabled="invalid">{{
                   isLogin ? 'Log in' : 'Sign up'
                 }}</ion-button>
               </ion-col>
@@ -61,9 +61,10 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
 
-import { required, email, min } from 'vee-validate/dist/rules';
+// Use 'as' to avoid scope conflict with authenticate()
+import { required, email as emailRule, min } from 'vee-validate/dist/rules';
 
-extend('email', { ...email, message: 'Should be a valid email address' });
+extend('email', { ...emailRule, message: 'Should be a valid email address' });
 extend('min', { ...min, message: 'Should at least be 6 characters long' });
 extend('required', { ...required, message: 'This field is required' });
 
@@ -105,16 +106,44 @@ export default {
       this.password = null;
     },
     onSubmit() {
-      console.log(this.email, this.password);
-      if (this.isLogin) {
-        // Send a request to login
-      } else {
-        this.$store
-          .dispatch('signup', { email: this.email, password: this.password })
-          .then(resData => {
-            console.log(resData);
-          });
-      }
+      this.authenticate(this.email, this.password);
+    },
+    authenticate(email, password) {
+      this.$store.commit('login');
+      this.isLoading = true;
+      this.$ionic.loadingController
+        .create({
+          keyboardClose: true,
+          message: 'Logging in...'
+        })
+        .then(loadingEl => {
+          loadingEl.present();
+          this.$store
+            .dispatch('signup', { email, password })
+            .then(resData => {
+              console.log(resData);
+              this.isLoading = false;
+              loadingEl.dismiss();
+              this.$router.push('/places/tabs/discover');
+            })
+            .catch(err => {
+              loadingEl.dismiss();
+              let message = 'Could not sign you up, please try again.';
+              if (err.message === 'EMAIL_EXISTS') {
+                message = 'This email address already exists!';
+              }
+              this.showAlert(message);
+            });
+        });
+    },
+    showAlert(message) {
+      this.$ionic.alertController
+        .create({
+          header: 'Authentication failed',
+          message,
+          buttons: ['OK']
+        })
+        .then(alertEl => alertEl.present());
     }
   }
 };
