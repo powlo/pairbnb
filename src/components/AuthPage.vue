@@ -109,7 +109,7 @@ export default {
       this.authenticate(this.email, this.password);
     },
     authenticate(email, password) {
-      this.$store.commit('login');
+      const loginOrSignup = this.isLogin ? 'login' : 'signup';
       this.isLoading = true;
       this.$ionic.loadingController
         .create({
@@ -119,18 +119,22 @@ export default {
         .then(loadingEl => {
           loadingEl.present();
           this.$store
-            .dispatch('signup', { email, password })
-            .then(resData => {
-              console.log(resData);
+            .dispatch(loginOrSignup, { email, password })
+            .then(() => {
               this.isLoading = false;
               loadingEl.dismiss();
               this.$router.push('/places/tabs/discover');
             })
             .catch(err => {
               loadingEl.dismiss();
+              // NB dangers of leaking information about what users exist.
               let message = 'Could not sign you up, please try again.';
               if (err.message === 'EMAIL_EXISTS') {
                 message = 'This email address already exists!';
+              } else if (err.message === 'EMAIL_NOT_FOUND') {
+                message = 'Email address could not be found.';
+              } else if (err.message === 'INVALID_PASSWORD') {
+                message = 'This password is not correct';
               }
               this.showAlert(message);
             });

@@ -9,13 +9,16 @@ const baseUrl = `https://${environment.firebaseProjectId}.firebaseio.com`;
 export default new Vuex.Store({
   state: {
     isAuthenticated: true,
-    userId: 'abc',
+    user: null,
     places: [],
     bookings: []
   },
   getters: {
-    getUserId(state) {
-      return state.userId;
+    userId(state) {
+      return state.user && state.user.id;
+    },
+    userIsAuthenticated(state) {
+      return state.user && !!state.user.token;
     }
   },
   actions: {
@@ -36,6 +39,25 @@ export default new Vuex.Store({
             throw new Error(resData.error.message);
           } else {
             return resData;
+          }
+        });
+    },
+    login({ commit }, { email, password }) {
+      return fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
+        {
+          method: 'post',
+          body: JSON.stringify({ email, password, returnSecureToken: true })
+        }
+      )
+        .then(response => {
+          return response.json();
+        })
+        .then(resData => {
+          if (resData.error) {
+            throw new Error(resData.error.message);
+          } else {
+            commit('LOGIN', resData);
           }
         });
     },
@@ -154,11 +176,11 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    login(state) {
-      state.isAuthenticated = true;
+    LOGIN(state, user) {
+      state.user = user;
     },
-    logout(state) {
-      state.isAuthenticated = false;
+    LOGOUT(state) {
+      state.user = null;
     },
     CREATE_PLACE(state, place) {
       state.places.push(place);
