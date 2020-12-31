@@ -25,7 +25,7 @@
                   <ValidationProvider rules="required|min:6" v-slot="{ errors }">
                     <ion-item>
                       <ion-label position="floating">Password</ion-label>
-                      <ion-input-vue v-model="password"></ion-input-vue>
+                      <ion-input-vue v-model="password" type="password"></ion-input-vue>
                     </ion-item>
                     <ion-item v-if="errors.length > 0" lines="none">
                       <ion-label>{{ errors[0] }}</ion-label>

@@ -1,10 +1,23 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { Plugins } from '@capacitor/core';
 import environment from './environments/environment';
 
 Vue.use(Vuex);
 
 const baseUrl = `https://${environment.firebaseProjectId}.firebaseio.com`;
+
+function storeAuthData(userId, token, tokenExpirationDate) {
+  const data = JSON.stringify({
+    userId,
+    token,
+    tokenExpirationDate
+  });
+  Plugins.Storage.set({
+    key: 'authData',
+    value: data
+  });
+}
 
 export default new Vuex.Store({
   state: {
@@ -191,6 +204,7 @@ export default new Vuex.Store({
         tokenExpiration: expirationTime
       };
       state.user = user;
+      storeAuthData(userData.localId, userData.idToken, expirationTime.toISOString());
     },
     LOGOUT(state) {
       state.user = null;
