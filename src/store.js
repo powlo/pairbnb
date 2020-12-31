@@ -17,8 +17,14 @@ export default new Vuex.Store({
     userId(state) {
       return state.user && state.user.id;
     },
-    userIsAuthenticated(state) {
-      return state.user && !!state.user.token;
+    userIsAuthenticated(state, getters) {
+      return !!getters.userToken;
+    },
+    userToken(state) {
+      if (!state.user || state.user.tokenExpiration <= new Date()) {
+        return null;
+      }
+      return state.user.token;
     }
   },
   actions: {
@@ -57,7 +63,7 @@ export default new Vuex.Store({
           if (resData.error) {
             throw new Error(resData.error.message);
           } else {
-            commit('LOGIN', resData);
+            commit('SET_USER_DATA', resData);
           }
         });
     },
@@ -176,7 +182,14 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    LOGIN(state, user) {
+    SET_USER_DATA(state, userData) {
+      const expirationTime = new Date(new Date().getTime() + +userData.expiresIn * 1000);
+      const user = {
+        id: userData.localId,
+        email: userData.email,
+        token: userData.idToken,
+        tokenExpiration: expirationTime
+      };
       state.user = user;
     },
     LOGOUT(state) {
