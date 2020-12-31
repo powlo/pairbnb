@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     relevantPlaces() {
-      const isShown = place => this.filter === 'all' || place.userId !== this.$store.state.userId;
+      const isShown = place => this.filter === 'all' || place.userId !== this.$store.getters.userId;
       return this.$store.state.places.filter(isShown);
     }
   },

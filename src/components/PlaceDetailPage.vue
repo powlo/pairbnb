@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     isBookable() {
-      return this.place.userId !== this.$store.state.userId;
+      return this.place.userId !== this.$store.getters.userId;
     }
   },
   created() {
