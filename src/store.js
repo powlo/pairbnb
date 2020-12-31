@@ -7,9 +7,10 @@ Vue.use(Vuex);
 
 const baseUrl = `https://${environment.firebaseProjectId}.firebaseio.com`;
 
-function storeAuthData(userId, token, tokenExpirationDate) {
+function storeAuthData(userId, email, token, tokenExpirationDate) {
   const data = JSON.stringify({
     userId,
+    email,
     token,
     tokenExpirationDate
   });
@@ -76,9 +77,34 @@ export default new Vuex.Store({
           if (resData.error) {
             throw new Error(resData.error.message);
           } else {
-            commit('SET_USER_DATA', resData);
+            const user = {
+              id: resData.localId,
+              email: resData.email,
+              token: resData.idToken,
+              tokenExpiration: new Date(new Date().getTime() + +resData.expiresIn * 1000)
+            };
+            commit('SET_USER_DATA', user);
           }
         });
+    },
+    autoLogin({ commit }) {
+      return Plugins.Storage.get({ key: 'authData' }).then(storedData => {
+        if (!storedData || !storedData.value) {
+          throw new Error('No stored data.');
+        }
+        const parsedData = JSON.parse(storedData.value);
+        const expirationTime = new Date(parsedData.tokenExpirationDate);
+        if (expirationTime <= new Date()) {
+          throw new Error('Expired token.');
+        }
+        const user = {
+          id: parsedData.userId,
+          email: parsedData.email,
+          token: parsedData.token,
+          tokenExpiration: expirationTime
+        };
+        commit('SET_USER_DATA', user);
+      });
     },
     addPlace({ commit }, p) {
       const place = { ...p };
@@ -196,15 +222,15 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_USER_DATA(state, userData) {
-      const expirationTime = new Date(new Date().getTime() + +userData.expiresIn * 1000);
-      const user = {
-        id: userData.localId,
-        email: userData.email,
-        token: userData.idToken,
-        tokenExpiration: expirationTime
-      };
-      state.user = user;
-      storeAuthData(userData.localId, userData.idToken, expirationTime.toISOString());
+      // Need to move this out.
+      // const expirationTime = new Date(new Date().getTime() + +userData.expiresIn * 1000);
+      state.user = userData;
+      storeAuthData(
+        userData.id,
+        userData.email,
+        userData.token,
+        userData.tokenExpiration.toISOString()
+      );
     },
     LOGOUT(state) {
       state.user = null;
