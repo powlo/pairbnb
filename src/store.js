@@ -160,8 +160,8 @@ export default new Vuex.Store({
         commit('CANCEL_BOOKING', bookingId);
       });
     },
-    fetchBookings({ commit, state }) {
-      return fetch(`${baseUrl}/bookings.json?orderBy="userId"&equalTo="${state.userId}"`)
+    fetchBookings({ commit, getters }) {
+      return fetch(`${baseUrl}/bookings.json?orderBy="userId"&equalTo="${getters.userId}"`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);

@@ -63,7 +63,7 @@ const router = new IonicVueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'login' && !store.state.isAuthenticated) next({ name: 'login' });
+  if (to.name !== 'login' && !store.getters.userIsAuthenticated) next({ name: 'login' });
   else next();
 });
 
