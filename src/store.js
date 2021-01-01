@@ -7,6 +7,8 @@ Vue.use(Vuex);
 
 const baseUrl = `https://${environment.firebaseProjectId}.firebaseio.com`;
 
+let activeLogoutTimer;
+
 function storeAuthData(userId, email, token, tokenExpirationDate) {
   const data = JSON.stringify({
     userId,
@@ -62,7 +64,7 @@ export default new Vuex.Store({
           }
         });
     },
-    login({ commit }, { email, password }) {
+    login({ commit, dispatch }, { email, password }) {
       return fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
         {
@@ -77,24 +79,27 @@ export default new Vuex.Store({
           if (resData.error) {
             throw new Error(resData.error.message);
           } else {
+            const tokenDuration = +resData.expiresIn * 1000;
             const user = {
               id: resData.localId,
               email: resData.email,
               token: resData.idToken,
-              tokenExpiration: new Date(new Date().getTime() + +resData.expiresIn * 1000)
+              tokenExpiration: new Date(new Date().getTime() + tokenDuration)
             };
+            dispatch('autoLogout', tokenDuration);
             commit('SET_USER_DATA', user);
           }
         });
     },
-    autoLogin({ commit }) {
+    autoLogin({ commit, dispatch }) {
       return Plugins.Storage.get({ key: 'authData' }).then(storedData => {
         if (!storedData || !storedData.value) {
           throw new Error('No stored data.');
         }
         const parsedData = JSON.parse(storedData.value);
         const expirationTime = new Date(parsedData.tokenExpirationDate);
-        if (expirationTime <= new Date()) {
+        const tokenDuration = expirationTime - new Date();
+        if (tokenDuration <= 0) {
           throw new Error('Expired token.');
         }
         const user = {
@@ -103,8 +108,17 @@ export default new Vuex.Store({
           token: parsedData.token,
           tokenExpiration: expirationTime
         };
+        dispatch('autoLogout', tokenDuration);
         commit('SET_USER_DATA', user);
       });
+    },
+    autoLogout({ commit }, duration) {
+      if (activeLogoutTimer) {
+        clearTimeout(activeLogoutTimer);
+      }
+      activeLogoutTimer = setTimeout(() => {
+        commit('LOGOUT');
+      }, duration);
     },
     addPlace({ commit }, p) {
       const place = { ...p };
@@ -234,6 +248,9 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.user = null;
+      if (activeLogoutTimer) {
+        clearTimeout(activeLogoutTimer);
+      }
       Plugins.Storage.remove({
         key: 'authData'
       });

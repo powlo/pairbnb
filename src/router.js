@@ -75,4 +75,16 @@ router.beforeEach((to, from, next) => {
   } else next();
 });
 
+// React to autoLogout by redirecting to the login page.
+// TODO: Consider moving all this auto-login/logout behaviour
+// into App.vue.
+store.watch(
+  () => store.getters.userIsAuthenticated,
+  userIsAuthenticated => {
+    if (!userIsAuthenticated) {
+      router.push({ name: 'login' });
+    }
+  }
+);
+
 export default router;
