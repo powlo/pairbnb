@@ -120,9 +120,9 @@ export default new Vuex.Store({
         commit('LOGOUT');
       }, duration);
     },
-    addPlace({ commit }, p) {
+    addPlace({ commit, getters }, p) {
       const place = { ...p };
-      return fetch(`${baseUrl}/offered-places.json`, {
+      return fetch(`${baseUrl}/offered-places.json?auth=${getters.userToken}`, {
         method: 'post',
         body: JSON.stringify(place)
       })
@@ -137,9 +137,9 @@ export default new Vuex.Store({
           commit('CREATE_PLACE', place);
         });
     },
-    updatePlace({ commit }, place) {
+    updatePlace({ commit, getters }, place) {
       // NB we won't be able to update place if we come directly to the edit page.
-      return fetch(`${baseUrl}/offered-places/${place.id}.json`, {
+      return fetch(`${baseUrl}/offered-places/${place.id}.json?auth=${getters.userToken}`, {
         method: 'PUT',
         body: JSON.stringify(place),
         headers: {
@@ -152,8 +152,8 @@ export default new Vuex.Store({
         commit('UPDATE_PLACE', place);
       });
     },
-    getPlace({ commit }, id) {
-      return fetch(`${baseUrl}/offered-places/${id}.json`)
+    getPlace({ commit, getters }, id) {
+      return fetch(`${baseUrl}/offered-places/${id}.json?auth=${getters.userToken}`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
@@ -169,8 +169,8 @@ export default new Vuex.Store({
           return { ...place };
         });
     },
-    fetchPlaces({ commit }) {
-      return fetch(`${baseUrl}/offered-places.json`)
+    fetchPlaces({ commit, getters }) {
+      return fetch(`${baseUrl}/offered-places.json?auth=${getters.userToken}`)
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
@@ -189,9 +189,9 @@ export default new Vuex.Store({
           });
         });
     },
-    addBooking({ commit }, b) {
+    addBooking({ commit, getters }, b) {
       const booking = { ...b };
-      return fetch(`${baseUrl}/bookings.json`, {
+      return fetch(`${baseUrl}/bookings.json?auth=${getters.userToken}`, {
         method: 'post',
         body: JSON.stringify(booking)
       })
@@ -206,15 +206,17 @@ export default new Vuex.Store({
           commit('CREATE_BOOKING', booking);
         });
     },
-    cancelBooking({ commit }, bookingId) {
-      return fetch(`${baseUrl}/bookings/${bookingId}.json`, {
+    cancelBooking({ commit, getters }, bookingId) {
+      return fetch(`${baseUrl}/bookings/${bookingId}.json?auth=${getters.userToken}`, {
         method: 'delete'
       }).then(() => {
         commit('CANCEL_BOOKING', bookingId);
       });
     },
     fetchBookings({ commit, getters }) {
-      return fetch(`${baseUrl}/bookings.json?orderBy="userId"&equalTo="${getters.userId}"`)
+      return fetch(
+        `${baseUrl}/bookings.json?auth=${getters.userToken}&orderBy="userId"&equalTo="${getters.userId}"`
+      )
         .then(response => {
           if (!response.ok) {
             throw Error(`${response.status} ${response.statusText}`);
