@@ -234,6 +234,9 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.user = null;
+      Plugins.Storage.remove({
+        key: 'authData'
+      });
     },
     CREATE_PLACE(state, place) {
       state.places.push(place);

@@ -107,6 +107,7 @@ export default {
     },
     onSubmit() {
       this.authenticate(this.email, this.password);
+      this.$refs.validator.reset();
     },
     authenticate(email, password) {
       const loginOrSignup = this.isLogin ? 'login' : 'signup';
