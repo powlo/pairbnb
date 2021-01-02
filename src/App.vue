@@ -37,6 +37,7 @@
 <script>
 import { business, checkboxOutline, exit } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { Plugins } from '@capacitor/core';
 
 addIcons({
   'ios-business': business.ios,
@@ -46,6 +47,7 @@ addIcons({
   'ios-exit': exit.ios,
   'md-exit': exit.md
 });
+
 export default {
   methods: {
     push(path) {
@@ -60,6 +62,15 @@ export default {
       this.$store.commit('LOGOUT');
       this.$router.push({ name: 'login' });
     }
+  },
+  created() {
+    Plugins.App.addListener('appStateChange', appState => {
+      if (appState.isActive) {
+        this.$store.dispatch('autoLogin').catch(() => {
+          this.onLogOut();
+        });
+      }
+    });
   }
 };
 </script>
