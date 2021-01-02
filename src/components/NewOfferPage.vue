@@ -101,6 +101,7 @@ import { checkmark } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import LocationPicker from './LocationPicker.vue';
 import ImagePicker from './ImagePicker.vue';
+import environment from '../environments/environment';
 
 addIcons({
   'ios-checkmark': checkmark.ios,
@@ -148,6 +149,7 @@ export default {
   },
   methods: {
     onCreateOffer() {
+      const baseUrl = `https://us-central1-${environment.firebaseProjectId}.cloudfunctions.net`;
       this.$ionic.loadingController
         .create({
           message: 'Creating place...'
@@ -155,17 +157,33 @@ export default {
         .then(loadingEl => {
           loadingEl.present();
         });
-      // chain this off the above?
-      this.$store
-        .dispatch('addPlace', {
-          title: this.place.title,
-          description: this.place.description,
-          imageURL:
-            'https://lonelyplanetimages.imgix.net/mastheads/GettyImages-538096543_medium.jpg?sharp=10&vib=20&w=1200',
-          price: +this.place.price,
-          availableFrom: new Date(this.place.dateFrom),
-          availableTo: new Date(this.place.dateTo),
-          location: this.place.location
+
+      // formData is an api for creating forms and submitting forms in js.
+      // https://developer.mozilla.org/en-US/docs/Web/API/FormData
+      const uploadData = new FormData();
+      uploadData.append('image', this.place.image);
+      return fetch(`${baseUrl}/storeImage`, {
+        method: 'post',
+        headers: { Authorization: `Bearer ${this.$store.getters.userToken}` },
+        body: uploadData
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(uploadRes => {
+          return this.$store.dispatch('addPlace', {
+            title: this.place.title,
+            description: this.place.description,
+            imageURL: uploadRes.imageUrl,
+            price: +this.place.price,
+            availableFrom: new Date(this.place.dateFrom),
+            availableTo: new Date(this.place.dateTo),
+            location: this.place.location,
+            userId: this.$store.getters.userId
+          });
         })
         .then(() => {
           this.$refs.validator.reset();
