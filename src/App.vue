@@ -60,7 +60,6 @@ export default {
     },
     onLogOut() {
       this.$store.commit('LOGOUT');
-      this.$router.push({ name: 'login' });
     }
   },
   created() {

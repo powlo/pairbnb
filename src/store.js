@@ -45,7 +45,7 @@ export default new Vuex.Store({
   },
   actions: {
     /* eslint-disable-next-line no-unused-vars */
-    signup({ commit }, { email, password }) {
+    signup({ commit, dispatch }, { email, password }) {
       return fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
         {
@@ -60,7 +60,15 @@ export default new Vuex.Store({
           if (resData.error) {
             throw new Error(resData.error.message);
           } else {
-            return resData;
+            const tokenDuration = +resData.expiresIn * 1000;
+            const user = {
+              id: resData.localId,
+              email: resData.email,
+              token: resData.idToken,
+              tokenExpiration: new Date(new Date().getTime() + tokenDuration)
+            };
+            dispatch('autoLogout', tokenDuration);
+            commit('SET_USER_DATA', user);
           }
         });
     },
